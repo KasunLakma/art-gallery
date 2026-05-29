@@ -51,10 +51,12 @@ export default function ProductCard({ title, price, category, image }: ProductCa
         <button
           type="button"
           onClick={() => console.log(`Added ${title} to cart`)}
-          className="mt-auto flex items-center gap-1.5 text-xs font-semibold tracking-wider text-artDark uppercase border-t border-artDark/5 pt-3 hover:text-artRose-dark transition-colors duration-200 w-full text-left"
+          className="group mt-auto flex items-center gap-1.5 text-xs font-semibold tracking-wider text-artDark uppercase border-t border-artDark/5 pt-3 hover:text-artRose-dark transition-all duration-300 ease-out hover:scale-[1.02] w-full text-left"
         >
-          <Plus className="w-3.5 h-3.5" />
           <span>Add to Cart</span>
+          <span className="inline-block transition-transform duration-300 ease-out group-hover:translate-x-1.5">
+            +
+          </span>
         </button>
       </div>
     </div>

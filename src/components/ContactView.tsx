@@ -103,10 +103,7 @@ export default function ContactView() {
             Send A Message
           </h3>
           <form onSubmit={handleSubmit} className="space-y-6">
-            <div>
-              <label htmlFor="name" className="block text-xs font-semibold uppercase tracking-wider text-artDark/50 mb-2">
-                Your Name
-              </label>
+            <div className="relative">
               <input
                 type="text"
                 id="name"
@@ -114,15 +111,18 @@ export default function ContactView() {
                 required
                 value={formData.name}
                 onChange={handleChange}
-                placeholder="e.g. Isabella Mercer"
-                className="w-full bg-artBg/50 border border-artRose-light/60 rounded-xl px-4 py-3 text-sm text-artDark focus:border-artRose focus:ring-1 focus:ring-artRose/50 outline-none transition-all duration-300 placeholder:text-artDark/30"
+                placeholder=" "
+                className="peer w-full bg-artBg/50 border border-artRose-light/60 rounded-xl px-4 pt-6 pb-2 text-sm text-artDark focus:border-artRose focus:ring-1 focus:ring-artRose/50 outline-none transition-all duration-300"
               />
+              <label
+                htmlFor="name"
+                className="absolute left-4 top-1.5 text-[9px] font-semibold uppercase tracking-wider text-artRose-dark pointer-events-none transition-all duration-200 peer-placeholder-shown:text-sm peer-placeholder-shown:font-normal peer-placeholder-shown:normal-case peer-placeholder-shown:tracking-normal peer-placeholder-shown:text-artDark/40 peer-placeholder-shown:top-3.5 peer-focus:top-1.5 peer-focus:text-[9px] peer-focus:font-semibold peer-focus:uppercase peer-focus:tracking-wider peer-focus:text-artRose-dark"
+              >
+                Your Name
+              </label>
             </div>
 
-            <div>
-              <label htmlFor="email" className="block text-xs font-semibold uppercase tracking-wider text-artDark/50 mb-2">
-                Email Address
-              </label>
+            <div className="relative">
               <input
                 type="email"
                 id="email"
@@ -130,15 +130,18 @@ export default function ContactView() {
                 required
                 value={formData.email}
                 onChange={handleChange}
-                placeholder="e.g. isabella@example.com"
-                className="w-full bg-artBg/50 border border-artRose-light/60 rounded-xl px-4 py-3 text-sm text-artDark focus:border-artRose focus:ring-1 focus:ring-artRose/50 outline-none transition-all duration-300 placeholder:text-artDark/30"
+                placeholder=" "
+                className="peer w-full bg-artBg/50 border border-artRose-light/60 rounded-xl px-4 pt-6 pb-2 text-sm text-artDark focus:border-artRose focus:ring-1 focus:ring-artRose/50 outline-none transition-all duration-300"
               />
+              <label
+                htmlFor="email"
+                className="absolute left-4 top-1.5 text-[9px] font-semibold uppercase tracking-wider text-artRose-dark pointer-events-none transition-all duration-200 peer-placeholder-shown:text-sm peer-placeholder-shown:font-normal peer-placeholder-shown:normal-case peer-placeholder-shown:tracking-normal peer-placeholder-shown:text-artDark/40 peer-placeholder-shown:top-3.5 peer-focus:top-1.5 peer-focus:text-[9px] peer-focus:font-semibold peer-focus:uppercase peer-focus:tracking-wider peer-focus:text-artRose-dark"
+              >
+                Email Address
+              </label>
             </div>
 
-            <div>
-              <label htmlFor="message" className="block text-xs font-semibold uppercase tracking-wider text-artDark/50 mb-2">
-                How can we assist you?
-              </label>
+            <div className="relative">
               <textarea
                 id="message"
                 name="message"
@@ -146,9 +149,15 @@ export default function ContactView() {
                 rows={4}
                 value={formData.message}
                 onChange={handleChange}
-                placeholder="Share your inquiry or customized gifting request..."
-                className="w-full bg-artBg/50 border border-artRose-light/60 rounded-xl px-4 py-3 text-sm text-artDark focus:border-artRose focus:ring-1 focus:ring-artRose/50 outline-none transition-all duration-300 placeholder:text-artDark/30 resize-none"
+                placeholder=" "
+                className="peer w-full bg-artBg/50 border border-artRose-light/60 rounded-xl px-4 pt-6 pb-2 text-sm text-artDark focus:border-artRose focus:ring-1 focus:ring-artRose/50 outline-none transition-all duration-300 resize-none"
               />
+              <label
+                htmlFor="message"
+                className="absolute left-4 top-1.5 text-[9px] font-semibold uppercase tracking-wider text-artRose-dark pointer-events-none transition-all duration-200 peer-placeholder-shown:text-sm peer-placeholder-shown:font-normal peer-placeholder-shown:normal-case peer-placeholder-shown:tracking-normal peer-placeholder-shown:text-artDark/40 peer-placeholder-shown:top-3.5 peer-focus:top-1.5 peer-focus:text-[9px] peer-focus:font-semibold peer-focus:uppercase peer-focus:tracking-wider peer-focus:text-artRose-dark"
+              >
+                How can we assist you?
+              </label>
             </div>
 
             <button

@@ -4,10 +4,12 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ShoppingBag, User, Menu, X } from "lucide-react";
+import CartDrawer from "@/components/CartDrawer";
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isCartOpen, setIsCartOpen] = useState(false);
   const pathname = usePathname();
 
   useEffect(() => {
@@ -75,30 +77,30 @@ export default function Navbar() {
           >
             <User className="w-5 h-5" />
           </Link>
-          <Link
-            href="/cart"
-            className="relative text-artDark/70 hover:text-artRose-dark transition-colors duration-200"
+          <button
+            onClick={() => setIsCartOpen(true)}
+            className="relative text-artDark/70 hover:text-artRose-dark transition-colors duration-200 cursor-pointer"
             title="Shopping Cart"
           >
             <ShoppingBag className="w-5 h-5" />
             <span className="absolute -top-1.5 -right-1.5 bg-artRose-light border border-artRose/30 text-artRose-dark text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center shadow-xs">
               3
             </span>
-          </Link>
+          </button>
         </div>
 
         {/* Mobile controls */}
         <div className="flex items-center space-x-4 md:hidden">
-          <Link
-            href="/cart"
-            className="relative text-artDark/70 hover:text-artRose-dark transition-colors duration-200"
+          <button
+            onClick={() => setIsCartOpen(true)}
+            className="relative text-artDark/70 hover:text-artRose-dark transition-colors duration-200 cursor-pointer"
             title="Shopping Cart"
           >
             <ShoppingBag className="w-5.5 h-5.5" />
             <span className="absolute -top-1.5 -right-1.5 bg-artRose-light border border-artRose/30 text-artRose-dark text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center shadow-xs">
               3
             </span>
-          </Link>
+          </button>
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             className="text-artDark focus:outline-none p-1"
@@ -150,6 +152,8 @@ export default function Navbar() {
           </Link>
         </div>
       </div>
+
+      <CartDrawer isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
     </header>
   );
 }

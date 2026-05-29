@@ -79,9 +79,12 @@ export default function ProductDetailView() {
           <button
             type="button"
             onClick={() => alert(`Added ${quantity} "Blushing Serenade Bouquet(s)" to bag!`)}
-            className="w-full bg-artDark text-white font-medium tracking-wider uppercase py-4 rounded-full shadow-sm hover:bg-artRose-dark transition-all duration-300 hover:scale-[1.01] active:scale-98"
+            className="group w-full flex items-center justify-center gap-2 bg-artDark text-white font-medium tracking-wider uppercase py-4 rounded-full shadow-sm hover:bg-artRose-dark transition-all duration-300 ease-out hover:scale-[1.02] active:scale-98"
           >
-            Add to Bag
+            <span>Add to Bag</span>
+            <span className="inline-block transition-transform duration-300 ease-out group-hover:translate-x-1.5">
+              →
+            </span>
           </button>
         </div>
       </div>
