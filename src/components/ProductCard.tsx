@@ -8,9 +8,10 @@ interface ProductCardProps {
   price: string;
   category: string;
   image?: string;
+  onAddToCart?: () => void;
 }
 
-export default function ProductCard({ title, price, category, image }: ProductCardProps) {
+export default function ProductCard({ title, price, category, image, onAddToCart }: ProductCardProps) {
   return (
     <div className="group relative flex flex-col bg-white/50 backdrop-blur-md border border-white/30 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-0.5">
       {/* Image container / Mockup Frame */}
@@ -50,7 +51,7 @@ export default function ProductCard({ title, price, category, image }: ProductCa
         {/* Minimal Add to Cart Action Link */}
         <button
           type="button"
-          onClick={() => console.log(`Added ${title} to cart`)}
+          onClick={onAddToCart}
           className="group mt-auto flex items-center gap-1.5 text-xs font-semibold tracking-wider text-artDark uppercase border-t border-artDark/5 pt-3 hover:text-artRose-dark transition-all duration-300 ease-out hover:scale-[1.02] w-full text-left"
         >
           <span>Add to Cart</span>

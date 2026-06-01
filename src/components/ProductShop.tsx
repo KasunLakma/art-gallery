@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import ProductCard from "@/components/ProductCard";
 import ProductSkeleton from "@/components/ProductSkeleton";
+import { useCart } from "@/src/context/CartContext";
 
 interface DatabaseProduct {
   id: string;
@@ -16,6 +17,7 @@ interface DatabaseProduct {
 
 export default function ProductShop() {
   const [filter, setFilter] = useState("All");
+  const { addToCart } = useCart();
   const [products, setProducts] = useState<DatabaseProduct[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -84,6 +86,7 @@ export default function ProductShop() {
               price={`$${product.price.toFixed(2)}`}
               category={product.category}
               image={product.image}
+              onAddToCart={() => addToCart(product)}
             />
           ))
         )}

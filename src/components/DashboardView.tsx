@@ -17,6 +17,7 @@ export default function DashboardView() {
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
 
   const [newName, setNewName] = useState("");
   const [newPrice, setNewPrice] = useState("");
@@ -55,6 +56,29 @@ export default function DashboardView() {
     // Since we don't have a DELETE API endpoint configured, we filter locally.
     setProducts((prev) => prev.filter((p) => p.id !== id));
     showToast("Product removed from view (local state only)", "success");
+    if (editingProduct?.id === id) {
+      handleCancelEdit();
+    }
+  };
+
+  const handleStartEdit = (product: Product) => {
+    setEditingProduct(product);
+    setNewName(product.name);
+    setNewPrice(product.price.toString());
+    setNewCategory(product.category);
+    setNewDescription(product.description);
+    setNewImage(product.image);
+    // Smooth scroll to the form
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const handleCancelEdit = () => {
+    setEditingProduct(null);
+    setNewName("");
+    setNewPrice("");
+    setNewCategory("Bouquets");
+    setNewDescription("");
+    setNewImage("");
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -66,36 +90,67 @@ export default function DashboardView() {
 
     setIsSubmitting(true);
     try {
-      const res = await fetch("/api/products", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name: newName,
-          description: newDescription,
-          price: parseFloat(newPrice) || 0,
-          image: newImage,
-          category: newCategory,
-        }),
-      });
+      if (editingProduct) {
+        // UPDATE MODE (PUT)
+        const res = await fetch("/api/products", {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            id: editingProduct.id,
+            name: newName,
+            description: newDescription,
+            price: parseFloat(newPrice) || 0,
+            image: newImage,
+            category: newCategory,
+          }),
+        });
 
-      if (res.status === 201) {
-        const newProduct = await res.json();
-        setProducts((prev) => [newProduct, ...prev]);
-        showToast("Product created and saved to Neon DB!", "success");
-        setNewName("");
-        setNewPrice("");
-        setNewDescription("");
-        setNewImage("");
-        setNewCategory("Bouquets");
+        if (res.status === 200) {
+          const updatedProduct = await res.json();
+          setProducts((prev) =>
+            prev.map((p) => (p.id === editingProduct.id ? updatedProduct : p))
+          );
+          showToast("Product updated successfully in Neon DB!", "success");
+          handleCancelEdit();
+        } else {
+          const errorData = await res.json();
+          showToast(errorData.error || "Failed to update product", "error");
+        }
       } else {
-        const errorData = await res.json();
-        showToast(errorData.error || "Failed to create product", "error");
+        // CREATE MODE (POST)
+        const res = await fetch("/api/products", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name: newName,
+            description: newDescription,
+            price: parseFloat(newPrice) || 0,
+            image: newImage,
+            category: newCategory,
+          }),
+        });
+
+        if (res.status === 201) {
+          const newProduct = await res.json();
+          setProducts((prev) => [newProduct, ...prev]);
+          showToast("Product created and saved to Neon DB!", "success");
+          setNewName("");
+          setNewPrice("");
+          setNewDescription("");
+          setNewImage("");
+          setNewCategory("Bouquets");
+        } else {
+          const errorData = await res.json();
+          showToast(errorData.error || "Failed to create product", "error");
+        }
       }
     } catch (err) {
-      console.error("Error adding product:", err);
-      showToast("Network error creating product", "error");
+      console.error("Error saving product:", err);
+      showToast("Network error saving product", "error");
     } finally {
       setIsSubmitting(false);
     }
@@ -122,10 +177,10 @@ export default function DashboardView() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 items-start">
-        {/* Left Column: Add New Product Form */}
+        {/* Left Column: Add/Edit Product Form */}
         <div className="bg-white border border-artRose-light/30 rounded-2xl p-6 md:p-8 shadow-xs">
           <h3 className="font-serif text-lg md:text-xl text-artDark font-light tracking-wide mb-6 border-b border-artRose-light/20 pb-4">
-            Add New Product
+            {editingProduct ? "Edit Product Details" : "Add New Product"}
           </h3>
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
@@ -222,18 +277,40 @@ export default function DashboardView() {
               </div>
             </div>
 
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="w-full bg-artDark text-white font-medium tracking-wider uppercase py-4 rounded-full shadow-sm hover:bg-artRose-dark flex items-center justify-center gap-2 transition-all duration-300 hover:scale-[1.01] active:scale-98 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {isSubmitting ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
-              ) : (
-                <Plus className="w-4 h-4" />
+            <div className="space-y-3">
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="w-full bg-artDark text-white font-medium tracking-wider uppercase py-4 rounded-full shadow-sm hover:bg-artRose-dark flex items-center justify-center gap-2 transition-all duration-300 hover:scale-[1.01] active:scale-98 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+              >
+                {isSubmitting ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : editingProduct ? (
+                  <span className="text-sm">💾</span>
+                ) : (
+                  <Plus className="w-4 h-4" />
+                )}
+                <span>
+                  {isSubmitting
+                    ? editingProduct
+                      ? "Updating..."
+                      : "Creating..."
+                    : editingProduct
+                    ? "Update Product"
+                    : "Create Product"}
+                </span>
+              </button>
+
+              {editingProduct && (
+                <button
+                  type="button"
+                  onClick={handleCancelEdit}
+                  className="w-full bg-transparent border border-artDark/20 text-artDark font-medium tracking-wider uppercase py-3 rounded-full hover:bg-artBg hover:text-artDark flex items-center justify-center gap-2 transition-all duration-300 cursor-pointer"
+                >
+                  <span>Cancel Edit</span>
+                </button>
               )}
-              <span>{isSubmitting ? "Creating..." : "Create Product"}</span>
-            </button>
+            </div>
           </form>
         </div>
 
@@ -272,14 +349,24 @@ export default function DashboardView() {
                         <td className="py-4 text-sm text-artDark/60">{product.category}</td>
                         <td className="py-4 text-sm font-semibold text-artDark text-right">${product.price.toFixed(2)}</td>
                         <td className="py-4 text-center">
-                          <button
-                            type="button"
-                            onClick={() => handleDelete(product.id)}
-                            className="inline-flex items-center gap-1.5 text-xs text-artDark/40 hover:text-red-500 font-semibold uppercase tracking-wider transition-colors duration-200"
-                          >
-                            <Trash2 className="w-3.5 h-3.5" />
-                            <span>Delete</span>
-                          </button>
+                          <div className="flex items-center justify-center gap-3">
+                            <button
+                              type="button"
+                              onClick={() => handleStartEdit(product)}
+                              className="inline-flex items-center gap-1.5 text-xs text-artDark/40 hover:text-artRose-dark font-semibold uppercase tracking-wider transition-colors duration-200"
+                            >
+                              <span>Edit</span>
+                            </button>
+                            <span className="text-artDark/10">|</span>
+                            <button
+                              type="button"
+                              onClick={() => handleDelete(product.id)}
+                              className="inline-flex items-center gap-1.5 text-xs text-artDark/40 hover:text-red-500 font-semibold uppercase tracking-wider transition-colors duration-200"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                              <span>Delete</span>
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     ))

@@ -5,12 +5,14 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ShoppingBag, User, Menu, X } from "lucide-react";
 import CartDrawer from "@/components/CartDrawer";
+import { useCart } from "@/src/context/CartContext";
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const pathname = usePathname();
+  const { cartCount } = useCart();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -81,9 +83,11 @@ export default function Navbar() {
             title="Shopping Cart"
           >
             <ShoppingBag className="w-5 h-5" />
-            <span className="absolute -top-1.5 -right-1.5 bg-artRose-light border border-artRose/30 text-artRose-dark text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center shadow-xs">
-              3
-            </span>
+            {cartCount > 0 && (
+              <span className="absolute -top-1.5 -right-1.5 bg-artRose-light border border-artRose/30 text-artRose-dark text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center shadow-xs">
+                {cartCount}
+              </span>
+            )}
           </button>
         </div>
 
@@ -95,9 +99,11 @@ export default function Navbar() {
             title="Shopping Cart"
           >
             <ShoppingBag className="w-5.5 h-5.5" />
-            <span className="absolute -top-1.5 -right-1.5 bg-artRose-light border border-artRose/30 text-artRose-dark text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center shadow-xs">
-              3
-            </span>
+            {cartCount > 0 && (
+              <span className="absolute -top-1.5 -right-1.5 bg-artRose-light border border-artRose/30 text-artRose-dark text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center shadow-xs">
+                {cartCount}
+              </span>
+            )}
           </button>
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}

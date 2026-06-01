@@ -57,3 +57,48 @@ export async function POST(request: Request) {
     );
   }
 }
+
+export async function PUT(request: Request) {
+  try {
+    const body = await request.json();
+    const { id, name, description, price, image, category } = body;
+
+    // Validation checks
+    if (!id || typeof id !== "string") {
+      return NextResponse.json({ error: "Product ID is required and must be a string" }, { status: 400 });
+    }
+    if (!name || typeof name !== "string") {
+      return NextResponse.json({ error: "Name is required and must be a string" }, { status: 400 });
+    }
+    if (!description || typeof description !== "string") {
+      return NextResponse.json({ error: "Description is required and must be a string" }, { status: 400 });
+    }
+    if (price === undefined || typeof price !== "number" || price < 0) {
+      return NextResponse.json({ error: "Price is required and must be a non-negative number" }, { status: 400 });
+    }
+    if (!image || typeof image !== "string") {
+      return NextResponse.json({ error: "Image URL is required and must be a string" }, { status: 400 });
+    }
+    if (!category || typeof category !== "string") {
+      return NextResponse.json({ error: "Category is required and must be a string" }, { status: 400 });
+    }
+
+    const updatedProduct = await prisma.product.update({
+      where: { id },
+      data: {
+        name,
+        description,
+        price,
+        image,
+        category,
+      },
+    });
+
+    return NextResponse.json(updatedProduct, { status: 200 });
+  } catch (error: any) {
+    return NextResponse.json(
+      { error: error.message || "Failed to update product" },
+      { status: 500 }
+    );
+  }
+}
