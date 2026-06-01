@@ -23,7 +23,7 @@ export default function LoginView() {
 
   return (
     <div className="flex items-center justify-center min-h-[60vh] md:min-h-[70vh] px-4 py-12">
-      <div className="w-full max-w-md bg-white border border-artRose-light/30 rounded-2xl p-8 md:p-10 shadow-lg shadow-artRose-light/10">
+      <div className="w-full max-w-md bg-white/40 backdrop-blur-lg border border-white/30 rounded-3xl shadow-2xl p-8 md:p-12">
         <div className="flex flex-col items-center mb-8">
           <div className="w-12 h-12 rounded-full bg-artRose-light/30 flex items-center justify-center text-artRose-dark mb-4">
             <Lock className="w-5 h-5" />
@@ -48,7 +48,7 @@ export default function LoginView() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="admin@artgallery.com"
-              className="w-full bg-artBg/50 border border-artRose-light/60 rounded-xl px-4 py-3 text-sm text-artDark focus:border-artRose focus:ring-1 focus:ring-artRose/50 outline-none transition-all duration-300 placeholder:text-artDark/30"
+              className="w-full bg-white/70 focus:bg-white border border-artRose-light/80 rounded-xl px-4 py-3 text-sm text-artDark focus:border-artRose focus:ring-1 focus:ring-artRose/50 outline-none transition-all duration-300 placeholder:text-artDark/30"
             />
           </div>
 
@@ -63,7 +63,7 @@ export default function LoginView() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
-              className="w-full bg-artBg/50 border border-artRose-light/60 rounded-xl px-4 py-3 text-sm text-artDark focus:border-artRose focus:ring-1 focus:ring-artRose/50 outline-none transition-all duration-300 placeholder:text-artDark/30"
+              className="w-full bg-white/70 focus:bg-white border border-artRose-light/80 rounded-xl px-4 py-3 text-sm text-artDark focus:border-artRose focus:ring-1 focus:ring-artRose/50 outline-none transition-all duration-300 placeholder:text-artDark/30"
             />
           </div>
 

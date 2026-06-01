@@ -35,10 +35,8 @@ export default function Navbar() {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled
-          ? "bg-white/70 backdrop-blur-md shadow-sm border-b border-artRose-light/20 py-4"
-          : "bg-transparent py-6"
+      className={`fixed top-0 left-0 right-0 z-50 bg-white/70 backdrop-blur-md transition-all duration-300 ${
+        isScrolled ? "py-4" : "py-6"
       }`}
     >
       <div className="max-w-7xl mx-auto px-6 md:px-12 flex items-center justify-between">
@@ -117,7 +115,7 @@ export default function Navbar() {
 
       {/* Slide-down mobile drawer */}
       <div
-        className={`md:hidden absolute top-full left-0 right-0 bg-white/95 backdrop-blur-md border-b border-artRose-light/20 shadow-md transition-all duration-300 ease-in-out origin-top ${
+        className={`md:hidden absolute top-full left-0 right-0 bg-white/95 backdrop-blur-md transition-all duration-300 ease-in-out origin-top ${
           isMobileMenuOpen
             ? "opacity-100 transform scale-y-100 max-h-[300px] visible"
             : "opacity-0 transform scale-y-95 max-h-0 invisible pointer-events-none"

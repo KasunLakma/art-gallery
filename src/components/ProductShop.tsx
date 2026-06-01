@@ -39,20 +39,22 @@ export default function ProductShop() {
 
   return (
     <div className="max-w-7xl mx-auto px-6 md:px-12 py-10">
-      <div className="flex justify-center gap-4 mb-10">
-        {["All", "Bouquets", "Hampers"].map((tab) => (
-          <button
-            key={tab}
-            onClick={() => setFilter(tab)}
-            className={`px-6 py-2.5 text-xs font-semibold tracking-widest uppercase rounded-full transition-all duration-300 ${
-              filter === tab
-                ? "bg-artDark text-white shadow-sm"
-                : "bg-artBg text-artDark/60 hover:text-artDark hover:bg-artRose-light/30"
-            }`}
-          >
-            {tab}
-          </button>
-        ))}
+      <div className="flex justify-center mb-10">
+        <div className="inline-flex items-center gap-2 p-1.5 bg-white/40 backdrop-blur-sm border border-white/40 rounded-full">
+          {["All", "Bouquets", "Hampers"].map((tab) => (
+            <button
+              key={tab}
+              onClick={() => setFilter(tab)}
+              className={`px-6 py-2.5 text-xs font-semibold tracking-widest uppercase rounded-full transition-all duration-300 ${
+                filter === tab
+                  ? "bg-artDark text-white shadow-sm"
+                  : "bg-transparent text-artDark/60 hover:text-artDark hover:bg-white/30"
+              }`}
+            >
+              {tab}
+            </button>
+          ))}
+        </div>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         {isLoading ? (

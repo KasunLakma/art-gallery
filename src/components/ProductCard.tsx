@@ -12,7 +12,7 @@ interface ProductCardProps {
 
 export default function ProductCard({ title, price, category, image }: ProductCardProps) {
   return (
-    <div className="group relative flex flex-col bg-white rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-lg hover:shadow-artRose-light/40 hover:-translate-y-0.5 border border-transparent hover:border-artRose-light/20">
+    <div className="group relative flex flex-col bg-white/50 backdrop-blur-md border border-white/30 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-0.5">
       {/* Image container / Mockup Frame */}
       <div className="relative aspect-square w-full overflow-hidden bg-artBg">
         {image ? (

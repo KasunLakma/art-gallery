@@ -5,13 +5,12 @@ import BentoGrid from "@/components/BentoGrid";
 
 export default function Home() {
   return (
-    <div className="flex flex-col flex-1 bg-artBg">
+    <div className="flex flex-col flex-1 bg-artBg -mt-20">
       {/* Hero Section */}
-      <section className="relative flex flex-col items-center justify-center text-center px-6 py-20 md:py-32 lg:py-40 flex-grow min-h-[75vh] overflow-hidden">
-        {/* Soft decorative glow behind text */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-artRose-light/40 rounded-full blur-[100px] pointer-events-none -z-10" />
+      <section className="relative flex flex-col items-center justify-center text-center px-6 pt-40 pb-20 md:pt-52 md:pb-32 lg:pt-60 lg:pb-40 flex-grow min-h-[75vh] overflow-hidden bg-gradient-to-tr from-neutral-50 via-white to-rose-50/50">
+        <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-amber-100/40 rounded-full blur-[120px] pointer-events-none z-0" />
 
-        <div className="max-w-4xl mx-auto flex flex-col items-center">
+        <div className="max-w-4xl mx-auto flex flex-col items-center relative z-10">
           <span className="text-xs md:text-sm tracking-[0.25em] font-semibold text-artDark/50 uppercase mb-4">
             Welcome to Art Gallery
           </span>
