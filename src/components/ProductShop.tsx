@@ -4,28 +4,39 @@ import React, { useState, useEffect } from "react";
 import ProductCard from "@/components/ProductCard";
 import ProductSkeleton from "@/components/ProductSkeleton";
 
-interface Product {
-  title: string;
-  price: string;
+interface DatabaseProduct {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  image: string;
   category: string;
+  createdAt: string;
 }
 
 export default function ProductShop() {
   const [filter, setFilter] = useState("All");
+  const [products, setProducts] = useState<DatabaseProduct[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 1500);
-    return () => clearTimeout(timer);
+    async function fetchProducts() {
+      try {
+        const res = await fetch("/api/products");
+        if (res.ok) {
+          const data = await res.json();
+          setProducts(data);
+        } else {
+          console.error("Failed to load products from database API");
+        }
+      } catch (err) {
+        console.error("Error fetching products from API:", err);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    fetchProducts();
   }, []);
-
-  const products: Product[] = [
-    { title: "Pastel Dreams Bouquet", price: "$85.00", category: "Bouquet" },
-    { title: "Sylvan Gold Frame", price: "$120.00", category: "Frames" },
-    { title: "Royal Celebration Hamper", price: "$250.00", category: "Hampers" },
-  ];
 
   // Helper to normalize singular/plural differences by removing trailing 's' and lowercasing
   const norm = (str: string) => str.toLowerCase().replace(/s$/, "");
@@ -61,13 +72,18 @@ export default function ProductShop() {
           Array.from({ length: 3 }).map((_, idx) => (
             <ProductSkeleton key={idx} />
           ))
+        ) : filteredProducts.length === 0 ? (
+          <div className="col-span-full py-12 text-center text-sm text-artDark/40 italic">
+            No products found in this category.
+          </div>
         ) : (
-          filteredProducts.map((product, idx) => (
+          filteredProducts.map((product) => (
             <ProductCard
-              key={idx}
-              title={product.title}
-              price={product.price}
+              key={product.id}
+              title={product.name}
+              price={`$${product.price.toFixed(2)}`}
               category={product.category}
+              image={product.image}
             />
           ))
         )}
