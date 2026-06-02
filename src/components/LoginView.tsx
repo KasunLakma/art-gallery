@@ -8,16 +8,33 @@ export default function LoginView() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    setIsSubmitting(true);
 
-    if (email === "admin@artgallery.com" && password === "admin123") {
-      router.push("/admin/dashboard");
-    } else {
-      setError("Invalid administrative credentials. Please try again.");
+    try {
+      const response = await fetch("/api/admin/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (response.ok) {
+        router.push("/admin/dashboard");
+      } else {
+        const data = await response.json();
+        setError(data.error || "Invalid administrative credentials. Please try again.");
+      }
+    } catch (err) {
+      setError("An error occurred during authentication.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -75,9 +92,10 @@ export default function LoginView() {
 
           <button
             type="submit"
-            className="w-full bg-artDark text-white font-medium tracking-wider uppercase py-4 rounded-full shadow-sm hover:bg-artRose-dark transition-all duration-300 hover:scale-[1.01] active:scale-98"
+            disabled={isSubmitting}
+            className="w-full bg-artDark text-white font-medium tracking-wider uppercase py-4 rounded-full shadow-sm hover:bg-artRose-dark transition-all duration-300 hover:scale-[1.01] active:scale-98 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 cursor-pointer"
           >
-            Authenticate
+            {isSubmitting ? "Authenticating..." : "Authenticate"}
           </button>
         </form>
       </div>

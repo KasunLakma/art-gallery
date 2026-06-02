@@ -25,6 +25,9 @@ interface Order {
   id: string;
   customerName: string;
   customerEmail: string;
+  customerPhone: string;
+  deliveryAddress: string;
+  deliveryInstructions?: string | null;
   totalAmount: number;
   status: string;
   items: OrderItem[];
@@ -639,8 +642,12 @@ export default function DashboardView() {
                       <tr key={order.id} className="hover:bg-artBg/30 transition-colors duration-150">
                         <td className="py-5 text-sm text-artDark">
                           <p className="font-semibold">{order.customerName}</p>
-                          <p className="text-artDark/50 text-xs">{order.customerEmail}</p>
-                          <p className="text-[10px] text-artRose font-medium mt-1 uppercase tracking-wide">
+                          <p className="text-artDark/50 text-xs">{order.customerEmail} • {order.customerPhone}</p>
+                          <p className="text-artDark/70 text-xs mt-1 font-light">📍 {order.deliveryAddress}</p>
+                          {order.deliveryInstructions && (
+                            <p className="text-artDark/50 text-[10px] italic mt-0.5">Note: "{order.deliveryInstructions}"</p>
+                          )}
+                          <p className="text-[10px] text-artRose font-medium mt-1.5 uppercase tracking-wide">
                             {(() => {
                               try {
                                 const items = typeof order.items === 'string' ? JSON.parse(order.items) : order.items;

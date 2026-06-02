@@ -13,6 +13,9 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
   const { cart, removeFromCart, clearCart } = useCart();
   const [customerName, setCustomerName] = useState("");
   const [customerEmail, setCustomerEmail] = useState("");
+  const [customerPhone, setCustomerPhone] = useState("");
+  const [deliveryAddress, setDeliveryAddress] = useState("");
+  const [deliveryInstructions, setDeliveryInstructions] = useState("");
   const [isCheckingOut, setIsCheckingOut] = useState(false);
   const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
 
@@ -26,8 +29,8 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
   const totalAmount = cart.reduce((acc, item) => acc + item.price * item.quantity, 0);
 
   const handleCheckout = async () => {
-    if (!customerName.trim() || !customerEmail.trim()) {
-      showToast("Please provide your name and email", "error");
+    if (!customerName.trim() || !customerEmail.trim() || !customerPhone.trim() || !deliveryAddress.trim()) {
+      showToast("Please fill in Name, Email, Phone, and Delivery Address", "error");
       return;
     }
 
@@ -41,6 +44,9 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
         body: JSON.stringify({
           customerName,
           customerEmail,
+          customerPhone: customerPhone.trim(),
+          deliveryAddress: deliveryAddress.trim(),
+          deliveryInstructions: deliveryInstructions.trim() || null,
           totalAmount,
           items: cart.map(item => ({
             id: item.id,
@@ -59,6 +65,9 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
           clearCart();
           setCustomerName("");
           setCustomerEmail("");
+          setCustomerPhone("");
+          setDeliveryAddress("");
+          setDeliveryInstructions("");
           onClose();
         }, 1500);
       } else {
@@ -170,6 +179,50 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                   onChange={(e) => setCustomerEmail(e.target.value)}
                   placeholder="e.g. jane@example.com"
                   className="w-full bg-white/80 border border-artRose-light/60 rounded-xl px-4 py-2.5 text-xs text-artDark focus:border-artRose focus:ring-1 focus:ring-artRose/50 outline-none transition-all duration-300 disabled:opacity-50"
+                />
+              </div>
+              <div>
+                <label htmlFor="customerPhone" className="block text-[10px] font-semibold uppercase tracking-wider text-artDark/50 mb-1.5">
+                  Phone Number
+                </label>
+                <input
+                  type="tel"
+                  id="customerPhone"
+                  required
+                  disabled={isCheckingOut}
+                  value={customerPhone}
+                  onChange={(e) => setCustomerPhone(e.target.value)}
+                  placeholder="e.g. +1 (555) 019-2834"
+                  className="w-full bg-white/80 border border-artRose-light/60 rounded-xl px-4 py-2.5 text-xs text-artDark focus:border-artRose focus:ring-1 focus:ring-artRose/50 outline-none transition-all duration-300 disabled:opacity-50"
+                />
+              </div>
+              <div>
+                <label htmlFor="deliveryAddress" className="block text-[10px] font-semibold uppercase tracking-wider text-artDark/50 mb-1.5">
+                  Delivery Address
+                </label>
+                <input
+                  type="text"
+                  id="deliveryAddress"
+                  required
+                  disabled={isCheckingOut}
+                  value={deliveryAddress}
+                  onChange={(e) => setDeliveryAddress(e.target.value)}
+                  placeholder="e.g. 123 Gallery Lane, Suite 4B"
+                  className="w-full bg-white/80 border border-artRose-light/60 rounded-xl px-4 py-2.5 text-xs text-artDark focus:border-artRose focus:ring-1 focus:ring-artRose/50 outline-none transition-all duration-300 disabled:opacity-50"
+                />
+              </div>
+              <div>
+                <label htmlFor="deliveryInstructions" className="block text-[10px] font-semibold uppercase tracking-wider text-artDark/50 mb-1.5">
+                  Delivery Instructions (Optional)
+                </label>
+                <textarea
+                  id="deliveryInstructions"
+                  disabled={isCheckingOut}
+                  value={deliveryInstructions}
+                  onChange={(e) => setDeliveryInstructions(e.target.value)}
+                  placeholder="e.g. Leave at front desk / ring bell twice..."
+                  rows={2}
+                  className="w-full bg-white/80 border border-artRose-light/60 rounded-xl px-4 py-2 text-xs text-artDark focus:border-artRose focus:ring-1 focus:ring-artRose/50 outline-none transition-all duration-300 disabled:opacity-50 resize-none"
                 />
               </div>
             </div>

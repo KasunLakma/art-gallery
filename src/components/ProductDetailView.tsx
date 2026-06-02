@@ -1,10 +1,24 @@
 "use client";
 
 import React, { useState } from "react";
-import { Plus, Minus, ShieldCheck } from "lucide-react";
+import { Plus, Minus, ShieldCheck, ArrowRight } from "lucide-react";
+import { useCart } from "@/src/context/CartContext";
 
-export default function ProductDetailView() {
+interface ProductDetailViewProps {
+  product: {
+    id: string;
+    name: string;
+    description: string;
+    price: number;
+    image: string;
+    category: string;
+  };
+}
+
+export default function ProductDetailView({ product }: ProductDetailViewProps) {
   const [quantity, setQuantity] = useState(1);
+  const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
+  const { addToCart } = useCart();
 
   const decreaseQuantity = () => {
     if (quantity > 1) setQuantity((prev) => prev - 1);
@@ -14,15 +28,50 @@ export default function ProductDetailView() {
     setQuantity((prev) => prev + 1);
   };
 
+  const showToast = (message: string, type: "success" | "error" = "success") => {
+    setToast({ message, type });
+    setTimeout(() => setToast(null), 3000);
+  };
+
+  const handleAddToBag = () => {
+    addToCart(
+      {
+        id: product.id,
+        name: product.name,
+        price: product.price,
+        category: product.category,
+        image: product.image,
+      },
+      quantity
+    );
+    showToast(`Added ${quantity} ${product.name}(s) to your shopping bag!`, "success");
+  };
+
   return (
-    <div className="max-w-6xl mx-auto px-6 md:px-12 py-12">
+    <div className="max-w-6xl mx-auto px-6 md:px-12 py-12 relative">
+      {/* Toast Notification */}
+      {toast && (
+        <div className="fixed bottom-6 right-6 z-55 flex items-center gap-3 bg-white/95 backdrop-blur-md border border-artRose-light/40 shadow-2xl rounded-2xl px-6 py-4 animate-in fade-in slide-in-from-bottom-5 duration-300">
+          <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
+          <span className="text-sm font-medium text-artDark">{toast.message}</span>
+        </div>
+      )}
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-16 items-start">
-        {/* Left side: Large elegant placeholder image frame */}
+        {/* Left side: Product Image */}
         <div className="relative aspect-square w-full rounded-2xl overflow-hidden bg-gradient-to-tr from-artBg to-artRose-light/30 border border-artRose-light/20 flex items-center justify-center group shadow-xs">
+          {product.image ? (
+            <img
+              src={product.image}
+              alt={product.name}
+              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+            />
+          ) : (
+            <span className="font-serif italic text-artDark/30 text-base tracking-wide text-center px-4">
+              Timeless Art Asset
+            </span>
+          )}
           <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
-          <span className="font-serif italic text-artDark/30 text-base tracking-wide text-center px-4">
-            High-Resolution Asset Placeholder
-          </span>
         </div>
 
         {/* Right side: Product metadata & actions */}
@@ -31,20 +80,24 @@ export default function ProductDetailView() {
           <div className="flex items-center gap-2 mb-4">
             <span className="inline-flex items-center gap-1 bg-emerald-50 text-emerald-700 text-xs font-semibold px-3 py-1 rounded-full border border-emerald-200/30">
               <ShieldCheck className="w-3.5 h-3.5" />
-              In Stock
+              Available In Gallery
             </span>
           </div>
 
+          <span className="text-[10px] tracking-[0.25em] font-semibold text-artRose-dark uppercase mb-2 block">
+            {product.category}
+          </span>
+
           <h1 className="font-serif text-3xl md:text-4xl lg:text-5xl font-light text-artDark tracking-wide mb-3">
-            Blushing Serenade Bouquet
+            {product.name}
           </h1>
 
           <p className="text-xl font-medium text-artRose-dark mb-6">
-            $85.00
+            ${product.price.toFixed(2)}
           </p>
 
           <p className="text-base text-artDark/60 leading-relaxed font-light mb-8">
-            An exquisite arrangement of hand-selected everlasting roses, wild eucalyptus, and delicate pampas grass, custom-styled to bring timeless elegance to your favorite space or serve as the perfect heartfelt gift.
+            {product.description}
           </p>
 
           {/* Quantity selector */}
@@ -56,18 +109,18 @@ export default function ProductDetailView() {
               <button
                 type="button"
                 onClick={decreaseQuantity}
-                className="w-10 h-10 rounded-full flex items-center justify-center text-artDark hover:bg-artBg hover:text-artRose-dark transition-colors duration-200"
+                className="w-10 h-10 rounded-full flex items-center justify-center text-artDark hover:bg-artBg hover:text-artRose-dark transition-colors duration-200 cursor-pointer"
                 aria-label="Decrease quantity"
               >
                 <Minus className="w-4 h-4" />
               </button>
-              <span className="w-12 text-center text-sm font-semibold text-artDark">
+              <span className="w-12 text-center text-sm font-semibold text-artDark select-none">
                 {quantity}
               </span>
               <button
                 type="button"
                 onClick={increaseQuantity}
-                className="w-10 h-10 rounded-full flex items-center justify-center text-artDark hover:bg-artBg hover:text-artRose-dark transition-colors duration-200"
+                className="w-10 h-10 rounded-full flex items-center justify-center text-artDark hover:bg-artBg hover:text-artRose-dark transition-colors duration-200 cursor-pointer"
                 aria-label="Increase quantity"
               >
                 <Plus className="w-4 h-4" />
@@ -78,13 +131,11 @@ export default function ProductDetailView() {
           {/* Add to Bag Button */}
           <button
             type="button"
-            onClick={() => alert(`Added ${quantity} "Blushing Serenade Bouquet(s)" to bag!`)}
-            className="group w-full flex items-center justify-center gap-2 bg-artDark text-white font-medium tracking-wider uppercase py-4 rounded-full shadow-sm hover:bg-artRose-dark transition-all duration-300 ease-out hover:scale-[1.02] active:scale-98"
+            onClick={handleAddToBag}
+            className="group w-full flex items-center justify-center gap-2 bg-artDark text-white font-medium tracking-wider uppercase py-4 rounded-full shadow-sm hover:bg-artRose-dark transition-all duration-300 ease-out hover:scale-[1.02] active:scale-98 cursor-pointer"
           >
             <span>Add to Bag</span>
-            <span className="inline-block transition-transform duration-300 ease-out group-hover:translate-x-1.5">
-              →
-            </span>
+            <ArrowRight className="w-4 h-4 transition-transform duration-300 ease-out group-hover:translate-x-1.5" />
           </button>
         </div>
       </div>

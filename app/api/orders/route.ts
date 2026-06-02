@@ -4,7 +4,7 @@ import { prisma } from "@/src/lib/prisma";
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { customerName, customerEmail, totalAmount, items } = body;
+    const { customerName, customerEmail, customerPhone, deliveryAddress, deliveryInstructions, totalAmount, items } = body;
 
     // Validation checks
     if (!customerName || typeof customerName !== "string") {
@@ -12,6 +12,12 @@ export async function POST(request: Request) {
     }
     if (!customerEmail || typeof customerEmail !== "string") {
       return NextResponse.json({ error: "Customer email is required" }, { status: 400 });
+    }
+    if (!customerPhone || typeof customerPhone !== "string") {
+      return NextResponse.json({ error: "Customer phone is required" }, { status: 400 });
+    }
+    if (!deliveryAddress || typeof deliveryAddress !== "string") {
+      return NextResponse.json({ error: "Delivery address is required" }, { status: 400 });
     }
     if (totalAmount === undefined || typeof totalAmount !== "number" || totalAmount < 0) {
       return NextResponse.json({ error: "Total amount is required and must be non-negative" }, { status: 400 });
@@ -24,6 +30,9 @@ export async function POST(request: Request) {
       data: {
         customerName,
         customerEmail,
+        customerPhone,
+        deliveryAddress,
+        deliveryInstructions: deliveryInstructions || null,
         totalAmount,
         items,
       },

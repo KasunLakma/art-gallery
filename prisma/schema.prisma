@@ -24,13 +24,16 @@ model Product {
 }
 
 model Order {
-  id            String   @id @default(uuid())
-  customerName  String
-  customerEmail String
-  totalAmount   Float
-  status        String   @default("PENDING")
-  items         Json
-  createdAt     DateTime @default(now())
+  id                   String   @id @default(uuid())
+  customerName         String
+  customerEmail        String
+  customerPhone        String
+  deliveryAddress      String
+  deliveryInstructions String?
+  totalAmount          Float
+  status               String   @default("PENDING")
+  items                Json
+  createdAt            DateTime @default(now())
 }
 
 model Inquiry {
@@ -41,4 +44,12 @@ model Inquiry {
   message   String
   createdAt DateTime @default(now())
 }
+
+model Admin {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+}
+
 
