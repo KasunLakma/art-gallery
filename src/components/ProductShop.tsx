@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import ProductCard from "@/components/ProductCard";
 import ProductSkeleton from "@/components/ProductSkeleton";
 import { useCart } from "@/src/context/CartContext";
@@ -16,6 +17,9 @@ interface DatabaseProduct {
 }
 
 export default function ProductShop() {
+  const searchParams = useSearchParams();
+  const categoryParam = searchParams.get("category");
+  
   const [filter, setFilter] = useState("All");
   const { addToCart } = useCart();
   const [products, setProducts] = useState<DatabaseProduct[]>([]);
@@ -40,8 +44,19 @@ export default function ProductShop() {
     fetchProducts();
   }, []);
 
-  // Helper to normalize singular/plural differences by removing trailing 's' and lowercasing
-  const norm = (str: string) => str.toLowerCase().replace(/s$/, "");
+  // Helper to normalize singular/plural/hyphenated differences
+  const norm = (str: string) => str.toLowerCase().replace(/-/g, " ").trim().replace(/s$/, "");
+
+  useEffect(() => {
+    if (categoryParam) {
+      const matchedTab = ["All", "Bouquets", "Frames", "Gift Boxes", "Gift Hampers"].find(
+        (tab) => norm(tab) === norm(categoryParam)
+      );
+      if (matchedTab) {
+        setFilter(matchedTab);
+      }
+    }
+  }, [categoryParam]);
 
   const filteredProducts = products.filter((product) => {
     return (
@@ -52,13 +67,13 @@ export default function ProductShop() {
 
   return (
     <div className="max-w-7xl mx-auto px-6 md:px-12 py-10">
-      <div className="flex justify-center mb-10">
-        <div className="inline-flex items-center gap-2 p-1.5 bg-white/40 backdrop-blur-sm border border-white/40 rounded-full">
-          {["All", "Bouquets", "Hampers"].map((tab) => (
+      <div className="flex justify-center mb-10 overflow-x-auto py-2">
+        <div className="inline-flex items-center gap-2 p-1.5 bg-white/40 backdrop-blur-sm border border-white/40 rounded-full max-w-full">
+          {["All", "Bouquets", "Frames", "Gift Boxes", "Gift Hampers"].map((tab) => (
             <button
               key={tab}
               onClick={() => setFilter(tab)}
-              className={`px-6 py-2.5 text-xs font-semibold tracking-widest uppercase rounded-full transition-all duration-300 ${
+              className={`px-6 py-2.5 text-xs font-semibold tracking-widest uppercase rounded-full transition-all duration-300 whitespace-nowrap cursor-pointer ${
                 filter === tab
                   ? "bg-artDark text-white shadow-sm"
                   : "bg-transparent text-artDark/60 hover:text-artDark hover:bg-white/30"
@@ -82,6 +97,7 @@ export default function ProductShop() {
           filteredProducts.map((product) => (
             <ProductCard
               key={product.id}
+              id={product.id}
               title={product.name}
               price={`$${product.price.toFixed(2)}`}
               category={product.category}

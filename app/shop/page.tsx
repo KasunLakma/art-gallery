@@ -1,5 +1,6 @@
-import React from "react";
+import React, { Suspense } from "react";
 import ProductShop from "@/components/ProductShop";
+import ProductSkeleton from "@/components/ProductSkeleton";
 
 export const metadata = {
   title: "Shop Our Collections | Art Gallery",
@@ -18,7 +19,15 @@ export default function ShopPage() {
         </h1>
         <div className="w-12 h-[2px] bg-artRose-dark/40 mx-auto" />
       </div>
-      <ProductShop />
+      <Suspense fallback={
+        <div className="max-w-7xl mx-auto px-6 md:px-12 py-10 grid grid-cols-1 md:grid-cols-3 gap-8">
+          {Array.from({ length: 3 }).map((_, idx) => (
+            <ProductSkeleton key={idx} />
+          ))}
+        </div>
+      }>
+        <ProductShop />
+      </Suspense>
     </main>
   );
 }
