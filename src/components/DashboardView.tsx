@@ -292,12 +292,14 @@ export default function DashboardView() {
     }
   };
 
-  // Filter orders based on name or email
+  // Filter orders based on name, email, phone, or address
   const filteredOrders = orders.filter((order) => {
     const searchLower = ordersSearch.toLowerCase();
     return (
       order.customerName.toLowerCase().includes(searchLower) ||
-      order.customerEmail.toLowerCase().includes(searchLower)
+      order.customerEmail.toLowerCase().includes(searchLower) ||
+      order.customerPhone.toLowerCase().includes(searchLower) ||
+      order.deliveryAddress.toLowerCase().includes(searchLower)
     );
   });
 
