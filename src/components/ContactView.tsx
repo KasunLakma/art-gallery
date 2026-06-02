@@ -7,18 +7,60 @@ export default function ContactView() {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
+    subject: "",
     message: "",
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [notification, setNotification] = useState<{
+    type: "success" | "error";
+    message: string;
+  } | null>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    alert(`Thank you for reaching out, ${formData.name}! We will get back to you shortly.`);
-    setFormData({ name: "", email: "", message: "" });
+    setIsSubmitting(true);
+    setNotification(null);
+
+    try {
+      const response = await fetch("/api/inquiries", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setNotification({
+          type: "success",
+          message: `Thank you for reaching out! We have received your inquiry.`,
+        });
+        setFormData({ name: "", email: "", subject: "", message: "" });
+        // Automatically hide notification after 5 seconds
+        setTimeout(() => {
+          setNotification(null);
+        }, 5000);
+      } else {
+        setNotification({
+          type: "error",
+          message: data.error || "Failed to submit inquiry. Please try again.",
+        });
+      }
+    } catch (error: any) {
+      setNotification({
+        type: "error",
+        message: "An unexpected network error occurred. Please try again.",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -142,6 +184,25 @@ export default function ContactView() {
             </div>
 
             <div className="relative">
+              <input
+                type="text"
+                id="subject"
+                name="subject"
+                required
+                value={formData.subject}
+                onChange={handleChange}
+                placeholder=" "
+                className="peer w-full bg-artBg/50 border border-artRose-light/60 rounded-xl px-4 pt-6 pb-2 text-sm text-artDark focus:border-artRose focus:ring-1 focus:ring-artRose/50 outline-none transition-all duration-300"
+              />
+              <label
+                htmlFor="subject"
+                className="absolute left-4 top-1.5 text-[9px] font-semibold uppercase tracking-wider text-artRose-dark pointer-events-none transition-all duration-200 peer-placeholder-shown:text-sm peer-placeholder-shown:font-normal peer-placeholder-shown:normal-case peer-placeholder-shown:tracking-normal peer-placeholder-shown:text-artDark/40 peer-placeholder-shown:top-3.5 peer-focus:top-1.5 peer-focus:text-[9px] peer-focus:font-semibold peer-focus:uppercase peer-focus:tracking-wider peer-focus:text-artRose-dark"
+              >
+                Subject
+              </label>
+            </div>
+
+            <div className="relative">
               <textarea
                 id="message"
                 name="message"
@@ -162,13 +223,69 @@ export default function ContactView() {
 
             <button
               type="submit"
-              className="w-full bg-artDark text-white font-medium tracking-wider uppercase py-4 rounded-full shadow-sm hover:bg-artRose-dark transition-all duration-300 hover:scale-[1.01] active:scale-98"
+              disabled={isSubmitting}
+              className="w-full bg-artDark text-white font-medium tracking-wider uppercase py-4 rounded-full shadow-sm hover:bg-artRose-dark transition-all duration-300 hover:scale-[1.01] active:scale-98 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
-              Submit Inquiry
+              {isSubmitting ? "Submitting Inquiry..." : "Submit Inquiry"}
             </button>
           </form>
         </div>
       </div>
+
+      {/* Toast Notification */}
+      {notification && (
+        <div className={`fixed bottom-6 right-6 z-50 flex items-center gap-3 px-5 py-4 rounded-2xl shadow-xl border transition-all duration-500 animate-slide-in-right ${
+          notification.type === "success" 
+            ? "bg-white border-emerald-100 text-emerald-800" 
+            : "bg-white border-rose-100 text-rose-800"
+        }`}>
+          {notification.type === "success" ? (
+            <div className="w-6 h-6 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-500">
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+          ) : (
+            <div className="w-6 h-6 rounded-full bg-rose-50 flex items-center justify-center text-rose-500">
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </div>
+          )}
+          <div className="flex flex-col gap-0.5">
+            <span className="text-xs font-semibold uppercase tracking-wider">
+              {notification.type === "success" ? "Message Sent" : "Submission Failed"}
+            </span>
+            <span className="text-sm font-light text-artDark/70">{notification.message}</span>
+          </div>
+          <button 
+            type="button"
+            onClick={() => setNotification(null)}
+            className="ml-4 text-artDark/30 hover:text-artDark/60 transition-colors"
+          >
+            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+      )}
+
+      {/* Animation Styles */}
+      <style>{`
+        @keyframes slideIn {
+          from {
+            transform: translate3d(100%, 0, 0);
+            opacity: 0;
+          }
+          to {
+            transform: translate3d(0, 0, 0);
+            opacity: 1;
+          }
+        }
+        .animate-slide-in-right {
+          animation: slideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+      `}</style>
     </div>
   );
 }
