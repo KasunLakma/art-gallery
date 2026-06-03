@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 
 interface ProductCardProps {
@@ -13,23 +13,28 @@ interface ProductCardProps {
 }
 
 export default function ProductCard({ id, title, price, category, image, onAddToCart }: ProductCardProps) {
+  const fallbackPlaceholder = "https://images.unsplash.com/photo-1531403009284-440f080d1e12?w=500";
+  const [imgSrc, setImgSrc] = useState(image || fallbackPlaceholder);
+
+  useEffect(() => {
+    setImgSrc(image || fallbackPlaceholder);
+  }, [image]);
+
   return (
     <div className="group relative flex flex-col bg-white/50 backdrop-blur-md border border-white/30 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-0.5">
       {/* Image container wrapped in Link */}
       <Link href={`/shop/${id}`} className="block relative aspect-square w-full overflow-hidden bg-artBg">
-        {image ? (
-          <img
-            src={image}
-            alt={title}
-            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-            loading="lazy"
-          />
-        ) : (
-          /* Decorative brand gradient if no image is supplied */
-          <div className="w-full h-full bg-gradient-to-tr from-artBg to-artRose-light/40 flex items-center justify-center transition-transform duration-500 group-hover:scale-105">
-            <span className="font-serif italic text-artDark/30 text-sm">Art Gallery</span>
-          </div>
-        )}
+        <img
+          src={imgSrc}
+          alt={title}
+          onError={() => {
+            if (imgSrc !== fallbackPlaceholder) {
+              setImgSrc(fallbackPlaceholder);
+            }
+          }}
+          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+          loading="lazy"
+        />
         
         {/* Subtle overlay on hover */}
         <div className="absolute inset-0 bg-artDark/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />

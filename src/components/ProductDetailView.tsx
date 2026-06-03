@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Plus, Minus, ShieldCheck, ArrowRight } from "lucide-react";
 import { useCart } from "@/src/context/CartContext";
 
@@ -16,6 +16,13 @@ interface ProductDetailViewProps {
 }
 
 export default function ProductDetailView({ product }: ProductDetailViewProps) {
+  const fallbackPlaceholder = "https://images.unsplash.com/photo-1531403009284-440f080d1e12?w=500";
+  const [imgSrc, setImgSrc] = useState(product.image || fallbackPlaceholder);
+
+  useEffect(() => {
+    setImgSrc(product.image || fallbackPlaceholder);
+  }, [product.image]);
+
   const [quantity, setQuantity] = useState(1);
   const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
   const { addToCart } = useCart();
@@ -60,17 +67,16 @@ export default function ProductDetailView({ product }: ProductDetailViewProps) {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-16 items-start">
         {/* Left side: Product Image */}
         <div className="relative aspect-square w-full rounded-2xl overflow-hidden bg-gradient-to-tr from-artBg to-artRose-light/30 border border-artRose-light/20 flex items-center justify-center group shadow-xs">
-          {product.image ? (
-            <img
-              src={product.image}
-              alt={product.name}
-              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-            />
-          ) : (
-            <span className="font-serif italic text-artDark/30 text-base tracking-wide text-center px-4">
-              Timeless Art Asset
-            </span>
-          )}
+          <img
+            src={imgSrc}
+            alt={product.name}
+            onError={() => {
+              if (imgSrc !== fallbackPlaceholder) {
+                setImgSrc(fallbackPlaceholder);
+              }
+            }}
+            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+          />
           <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
         </div>
 
