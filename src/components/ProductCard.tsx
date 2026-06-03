@@ -13,7 +13,7 @@ interface ProductCardProps {
 }
 
 export default function ProductCard({ id, title, price, category, image, onAddToCart }: ProductCardProps) {
-  const fallbackPlaceholder = "https://images.unsplash.com/photo-1531403009284-440f080d1e12?w=500";
+  const fallbackPlaceholder = "https://images.unsplash.com/photo-1513201099705-a9746e1e201f?w=500";
   const [imgSrc, setImgSrc] = useState(image || fallbackPlaceholder);
 
   useEffect(() => {
