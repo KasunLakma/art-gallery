@@ -217,6 +217,20 @@ export default function DashboardView() {
     setNewImage("");
   };
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      if (typeof reader.result === "string") {
+        setNewImage(reader.result);
+        showToast("Image uploaded successfully from device!", "success");
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newName.trim() || !newPrice.trim() || !newDescription.trim() || !newImage.trim()) {
@@ -459,19 +473,46 @@ export default function DashboardView() {
 
               <div>
                 <label htmlFor="image" className="block text-xs font-semibold uppercase tracking-wider text-artDark/50 mb-2">
-                  Image URL
+                  Image Source
                 </label>
-                <div className="relative">
-                  <ImageIcon className="w-4 h-4 text-artDark/30 absolute left-4 top-1/2 -translate-y-1/2" />
-                  <input
-                    type="url"
-                    id="image"
-                    required
-                    value={newImage}
-                    onChange={(e) => setNewImage(e.target.value)}
-                    placeholder="e.g. https://images.unsplash.com/photo-..."
-                    className="w-full bg-artBg/50 border border-artRose-light/60 rounded-xl pl-11 pr-4 py-3 text-sm text-artDark focus:border-artRose focus:ring-1 focus:ring-artRose/50 outline-none transition-all duration-300 placeholder:text-artDark/30"
-                  />
+                <div className="space-y-4">
+                  {/* File Upload Selector */}
+                  <div className="border-2 border-dashed border-artRose-light/60 rounded-xl p-4 bg-artBg/30 hover:bg-white hover:border-artRose transition-all duration-300">
+                    <input
+                      type="file"
+                      id="imageFile"
+                      accept="image/*"
+                      onChange={handleFileChange}
+                      className="w-full text-xs text-artDark/50 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-artRose-light/30 file:text-artRose-dark hover:file:bg-artRose-light/50 file:cursor-pointer"
+                    />
+                  </div>
+
+                  {/* URL Text Input as optional fallback */}
+                  <div className="relative">
+                    <ImageIcon className="w-4 h-4 text-artDark/30 absolute left-4 top-1/2 -translate-y-1/2" />
+                    <input
+                      type="url"
+                      id="image"
+                      value={newImage.startsWith("data:") ? "" : newImage}
+                      onChange={(e) => setNewImage(e.target.value)}
+                      placeholder="Or enter image URL fallback..."
+                      className="w-full bg-artBg/50 border border-artRose-light/60 rounded-xl pl-11 pr-4 py-3 text-sm text-artDark focus:border-artRose focus:ring-1 focus:ring-artRose/50 outline-none transition-all duration-300 placeholder:text-artDark/30"
+                    />
+                  </div>
+
+                  {/* Image Preview Container */}
+                  {newImage && (
+                    <div className="relative w-full h-32 rounded-xl overflow-hidden border border-artRose-light/40 bg-artBg">
+                      <img src={newImage} alt="Product preview" className="w-full h-full object-cover" />
+                      <button
+                        type="button"
+                        onClick={() => setNewImage("")}
+                        className="absolute top-2 right-2 bg-artDark/80 hover:bg-red-600 text-white rounded-full p-1 transition-colors text-[10px] w-5 h-5 flex items-center justify-center cursor-pointer font-bold border-none"
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
 
