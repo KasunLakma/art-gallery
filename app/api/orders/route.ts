@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/src/lib/prisma";
+import bcrypt from "bcryptjs";
+import crypto from "crypto";
 
 export async function POST(request: Request) {
   try {
@@ -26,6 +28,24 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Cart items are required and cannot be empty" }, { status: 400 });
     }
 
+    // Check if customer exists by email
+    let customer = await prisma.customer.findUnique({
+      where: { email: customerEmail.trim().toLowerCase() },
+    });
+
+    // Automatically create a new Customer record if it doesn't exist
+    if (!customer) {
+      const tempPassword = crypto.randomUUID();
+      const hashedPassword = bcrypt.hashSync(tempPassword, 10);
+      customer = await prisma.customer.create({
+        data: {
+          name: customerName.trim(),
+          email: customerEmail.trim().toLowerCase(),
+          password: hashedPassword,
+        },
+      });
+    }
+
     const newOrder = await prisma.order.create({
       data: {
         customerName,
@@ -35,6 +55,7 @@ export async function POST(request: Request) {
         deliveryInstructions: deliveryInstructions || null,
         totalAmount,
         items,
+        customerId: customer.id,
       },
     });
 
@@ -46,3 +67,4 @@ export async function POST(request: Request) {
     );
   }
 }
+
