@@ -70,13 +70,6 @@ export default function Navbar() {
 
         {/* Action Icons */}
         <div className="hidden md:flex items-center space-x-6">
-          <Link
-            href="/login"
-            className="text-artDark/70 hover:text-artRose-dark transition-colors duration-200 flex items-center gap-2 text-sm font-medium"
-            title="Admin Login"
-          >
-            <User className="w-5 h-5" />
-          </Link>
           <button
             onClick={() => setIsCartOpen(true)}
             className="relative text-artDark/70 hover:text-artRose-dark transition-colors duration-200 cursor-pointer"
@@ -145,15 +138,6 @@ export default function Navbar() {
               </Link>
             );
           })}
-          <hr className="border-artRose-light/40 my-2" />
-          <Link
-            href="/login"
-            onClick={() => setIsMobileMenuOpen(false)}
-            className="flex items-center gap-3 text-base font-medium text-artDark/70 hover:text-artRose-dark py-2 pl-3 transition-colors duration-200"
-          >
-            <User className="w-5 h-5" />
-            <span>Admin Login</span>
-          </Link>
         </div>
       </div>
 

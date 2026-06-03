@@ -26,7 +26,7 @@ export default function LoginView() {
       });
 
       if (response.ok) {
-        router.push("/admin/dashboard");
+        router.push("/management-secure-portal/dashboard");
       } else {
         const data = await response.json();
         setError(data.error || "Invalid administrative credentials. Please try again.");
