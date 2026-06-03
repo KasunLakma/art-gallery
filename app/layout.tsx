@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { Playfair_Display, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
-import Navbar from "@/src/components/Navbar";
 import { CartProvider } from "@/src/context/CartContext";
+import LayoutWrapper from "@/src/components/LayoutWrapper";
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -28,10 +28,9 @@ export default function RootLayout({
     <html lang="en" className="h-full antialiased">
       <body className={`${playfair.variable} ${jakarta.variable} font-jakarta min-h-full flex flex-col`}>
         <CartProvider>
-          <Navbar />
-          <main className="pt-20 flex-1 flex flex-col">
+          <LayoutWrapper>
             {children}
-          </main>
+          </LayoutWrapper>
         </CartProvider>
       </body>
     </html>
