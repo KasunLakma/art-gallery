@@ -33,6 +33,7 @@ export default function Navbar() {
     { name: "Home", href: "/" },
     { name: "Shop", href: "/shop" },
     { name: "Contact Us", href: "/contact" },
+    { name: "Track Order", href: "/customer-dashboard" },
   ];
 
   return (
